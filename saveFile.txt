@@ -1,1 +1,18 @@
-no save
+Save 1
+Staunch
+4
+5
+6
+7
+10
+['BoneBreaker', 'AxeThrow']
+50
+170
+Nick
+1
+2
+3
+4
+10
+['SwordSlash', 'ThrowingKnife']
+140
