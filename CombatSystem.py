@@ -21,17 +21,17 @@ class Combat:
         self.enemies = enemies
         self.fighters = fighters
 
-    def check_enemies_alive(self, enemies):
-        for i in enemies:
+    def check_enemies_alive(self):
+        for i in self.enemies:
             if i.health > 0:
                 # True = At least one enemy remains alive
                 return True
             # False = all enemies friends are dead
             return False
 
-    def fight(self, fighters):
+    def fight(self):
         a = len(self.enemies)
-        n = len(fighters)
+        n = len(self.fighters)
         i = 0
         p = 0
         m = 0
@@ -39,11 +39,11 @@ class Combat:
         # Orders Fighters by Speed
         for i in range(n):
             for j in range(0, n - i - 1):
-                if int(fighters[j].speed) > int(fighters[j+1].speed):
-                    fighters[j], fighters[j+1] = fighters[j+1], fighters[j]
+                if int(self.fighters[j].speed) > int(self.fighters[j+1].speed):
+                    self.fighters[j], self.fighters[j+1] = self.fighters[j+1], self.fighters[j]
 
         while int(self.player.health) > 0 and self.check_enemies_alive(self.enemies):
-            for z in fighters:
+            for z in self.fighters:
                 if z.isPlayer:
                     while int(z.action_points) > p:
                         print("Pick a move\n1-" + z.move_list[0].name + "\n2-" + z.move_list[1].name)
@@ -93,48 +93,44 @@ class Combat:
 class Player:
 
     # Constructor Method
-    def __init__(self, name, speed, strength, intelligence, constitution, level, move_list, exp, health):
-        self.name = name
-        self.speed = speed
-        self.strength = strength
-        self.intelligence = intelligence
-        self.constitution = constitution
-        self.level = level
-        self.move_list = move_list
-        self.exp = exp
-        self.health = health
+    def __init__(self):
+        self.read_from_save_file()
         self.action_points = int(self.speed) * 3
 
     # Method to Write Player stats to saveFile
-    def write_to_save_file(self, name, speed, strength, intelligence, constitution, level, move_list, exp, health):
+    def write_to_save_file(self):
+        from json import dumps
+        x = {
+            "name":self.name,
+            "speed":self.speed,
+            "strength":self.strength,
+            "intelligence":self.intelligence,
+            "constitution":self.constitution,
+            "level":self.level,
+            "move_list":self.move_list,
+            "exp":self.exp,
+            "health":self.health
+        }
         saveFile = open("saveFile.txt", "w+")
-        saveFile.write("Save 1")
-        saveFile.write("\n")
-        saveFile.write(str(self.name))
-        saveFile.write(str(self.speed))
-        saveFile.write(str(self.strength))
-        saveFile.write(str(self.intelligence))
-        saveFile.write(str(self.constitution))
-        saveFile.write(str(self.level))
-        saveFile.write(self.move_list)
-        saveFile.write(str(self.exp))
-        saveFile.write(str(self.health))
+        saveFile.write(dumps(x))
         saveFile.close()
 
     # Method to Read Player stats from saveFile
-    def read_from_save_file(self, name, speed, strength, intelligence, constitution, level, move_list, exp, health):
+    def read_from_save_file(self):
+        from json import loads
         loadFile = open("saveFile.txt", "r+")
-        file = [loadFile.readlines()]
-        self.name = file[1]
-        self.speed = file[2]
-        self.strength = file[3]
-        self.intelligence = file[4]
-        self.constitution = file[5]
-        self.level = file[6]
-        self.move_list = file[7]
-        self.exp = file[8]
-        self.health = file[9]
+        y = loadFile.read()
         loadFile.close()
+        y = loads(y)
+        self.name = y["name"]
+        self.speed = y["speed"]
+        self.strength = y["strength"]
+        self.intelligence = y["intelligence"]
+        self.constitution = y["constitution"]
+        self.level = y["level"]
+        self.move_list = y["move_list"]
+        self.exp = y["exp"]
+        self.health = y["health"]
 
     def isPlayer(self):
         return True
@@ -169,43 +165,43 @@ class Move:
 # Companion Class
 class Companion:
     # Constructor Method
-    def __init__(self, name, speed, strength, intelligence, constitution, level, move_list, health):
-        self.name = name
-        self.speed = speed
-        self.strength = strength
-        self.intelligence = intelligence
-        self.constitution = constitution
-        self.level = level
-        self.move_list = move_list
-        self.health = health
+    def __init__(self):
+        self.read_from_save_file()
         self.action_points = int(self.speed) * 3
 
     # Method to Write Companion stats to saveFile
-    def write_to_save_file(self, name, speed, strength, intelligence, constitution, level, move_list, health):
-            saveFile = open("saveFile.txt", "a+")
-            saveFile.write(str(self.name))
-            saveFile.write(str(self.speed))
-            saveFile.write(str(self.strength))
-            saveFile.write(str(self.intelligence))
-            saveFile.write(str(self.constitution))
-            saveFile.write(str(self.level))
-            saveFile.write(str(self.move_list))
-            saveFile.write(str(self.health))
-            saveFile.close()
+    def write_to_save_file(self):
+        from json import dumps
+        x = {
+            "name": self.name,
+            "speed": self.speed,
+            "strength": self.strength,
+            "intelligence": self.intelligence,
+            "constitution": self.constitution,
+            "level": self.level,
+            "move_list": self.move_list,
+            "health": self.health
+        }
+        saveFile = open("saveFile.txt", "a+")
+        saveFile.write(dumps(x))
+        saveFile.close()
 
     # Method to Read Companion stats from saveFile
-    def read_from_save_file(self, name, speed, strength, intelligence, constitution, level, move_list, health):
+    def read_from_save_file(self):
+        from json import loads
         loadFile = open("saveFile.txt", "r+")
-        file = [loadFile.readlines()]
-        self.name = file[10]
-        self.speed = file[11]
-        self.strength = file[12]
-        self.intelligence = file[13]
-        self.constitution = file[14]
-        self.level = file[15]
-        self.move_list = file[16]
-        self.health = file[17]
+        y = loadFile.read()
+        y = loadFile.read()
         loadFile.close()
+        y = loads(y)
+        self.name = y["name"]
+        self.speed = y["speed"]
+        self.strength = y["strength"]
+        self.intelligence = y["intelligence"]
+        self.constitution = y["constitution"]
+        self.level = y["level"]
+        self.move_list = y["move_list"]
+        self.health = y["health"]
 
     def isPlayer(self):
         return True
@@ -220,16 +216,9 @@ BoneBreaker = Move("Bone Breaker", 50, 95, 4)
 AxeThrow = Move("Axe Throw", 60, 80, 6)
 player_move_list = [BoneBreaker, AxeThrow]
 
-hi = file1[7].replace("[", "").replace("]", "").strip().split(",")
 # Making a Player Instance
-player1 = Player(file1[1], file1[2], file1[3], file1[4], file1[5],
-                 file1[6],
-                 hi,
-                 file1[8],
-                 file1[9])
-player1.write_to_save_file(player1.name, player1.speed, player1.strength, player1.intelligence,
-                            player1.constitution, player1.level, player1.move_list,
-                            player1.exp, player1.health)
+player1 = Player()
+player1.write_to_save_file()
 
 
 
@@ -239,10 +228,8 @@ ThrowingKnife = Move("Throwing Knife", 15, 90, 1)
 Companion_Move_Set = [SwordSlash, ThrowingKnife]
 
 # Making a Companion Instance
-comp = Companion(file1[10], file1[11], file1[12], file1[13], file1[14], file1[15], file1[16].replace("[", "").replace("]", "").strip().split(","), file1[17])
-comp.write_to_save_file(comp.name, comp.speed, comp.strength, comp.intelligence,
-                            comp.constitution, comp.level, comp.move_list,
-                            comp.health)
+comp = Companion()
+comp.write_to_save_file()
 
 
 # Skeleton Archer's Move Set
